@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en-PH">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Amates Solutions — Free Solar Assessment</title>
+<style>
+  :root{
+    --navy:#0b1b2b; --navy-2:#12293f; --ink:#1c2b3a; --muted:#5c6b7a;
+    --solar:#f5b301; --solar-2:#ffd34d; --cream:#faf7f0; --card:#ffffff;
+    --line:#e4e0d6; --ok:#0f8a5f; --danger:#c0392b; --radius:18px;
+    --shadow:0 18px 40px -18px rgba(11,27,43,.28);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--cream); color:var(--ink);
+    font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  .wrap{max-width:1040px;margin:0 auto;padding:0 18px}
+  .grid{display:grid;gap:26px}
+  @media(min-width:960px){ .grid{grid-template-columns:1fr 1.15fr;gap:44px;padding:56px 0} }
+
+  /* ---------- hero / pitch ---------- */
+  .pitch{padding:34px 0 6px}
+  @media(min-width:960px){ .pitch{padding:56px 0 0} }
+  .eyebrow{display:flex;align-items:center;gap:10px;font-size:11px;font-weight:800;
+    letter-spacing:.16em;text-transform:uppercase;color:var(--navy)}
+  .eyebrow::before{content:"";width:26px;height:3px;border-radius:2px;background:var(--solar)}
+  h1{margin:14px 0 0;font-size:clamp(30px,7vw,52px);line-height:1.02;letter-spacing:-.02em;color:var(--navy)}
+  .lede{margin:16px 0 0;color:var(--muted);font-size:16px;max-width:56ch}
+  .perks{list-style:none;margin:22px 0 0;padding:0;display:grid;gap:12px}
+  .perks li{display:flex;gap:11px;align-items:flex-start;font-size:14.5px;color:var(--navy-2)}
+  .perks b{font-weight:700}
+  .tick{flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:var(--solar);
+    display:grid;place-items:center;margin-top:1px}
+  .tick svg{width:11px;height:11px}
+  .fine{margin:22px 0 0;padding:14px 16px;background:#fff;border:1px solid var(--line);
+    border-radius:14px;font-size:11.5px;color:#7b8794}
+
+  /* ---------- card ---------- */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:26px;
+    box-shadow:var(--shadow);padding:22px 18px;margin:26px 0 60px}
+  @media(min-width:640px){ .card{padding:30px} }
+
+  .progress{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .progress .dot{flex:1;height:4px;border-radius:99px;background:var(--line);overflow:hidden}
+  .progress .dot.on{background:var(--solar)}
+  .progress .lbl{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);margin-left:8px;white-space:nowrap}
+
+  section.block{border-top:1px solid var(--line);padding:22px 0 6px;margin-top:22px}
+  section.block:first-of-type{border-top:0;margin-top:14px}
+  .step{display:flex;align-items:baseline;gap:10px;margin:0 0 4px}
+  .step .n{width:26px;height:26px;flex:0 0 auto;border-radius:50%;background:var(--navy);
+    color:#fff;font-size:12.5px;font-weight:800;display:grid;place-items:center;transform:translateY(4px)}
+  .step h2{margin:0;font-size:19px;color:var(--navy);letter-spacing:-.01em}
+  .hint{margin:6px 0 16px;color:var(--muted);font-size:13.5px}
+
+  .field{margin:0 0 16px}
+  .field>label,.legend{display:block;font-size:11.5px;font-weight:800;letter-spacing:.09em;
+    text-transform:uppercase;color:var(--navy);margin-bottom:7px}
+  .req{color:var(--danger)}
+  input[type=text],input[type=email],input[type=tel],select,textarea{
+    width:100%;font:inherit;font-size:16px;color:var(--ink);background:#fff;
+    border:1.5px solid var(--line);border-radius:14px;padding:14px 15px;outline:none;
+    transition:border-color .15s, box-shadow .15s}
+  input:focus,select:focus,textarea:focus{border-color:var(--solar);box-shadow:0 0 0 4px rgba(245,179,1,.16)}
+  textarea{min-height:96px;resize:vertical}
+  .two{display:grid;gap:14px}
+  @media(min-width:560px){ .two{grid-template-columns:1fr 1fr} }
+
+  /* goals */
+  .choices{display:grid;gap:10px}
+  .choice{display:flex;gap:12px;align-items:flex-start;padding:14px;border:1.5px solid var(--line);
+    border-radius:14px;cursor:pointer;background:#fff;transition:.15s}
+  .choice:hover{border-color:#cfc8b8}
+  .choice input{width:20px;height:20px;margin:2px 0 0;accent-color:var(--navy);flex:0 0 auto}
+  .choice span b{display:block;font-size:15px;color:var(--navy)}
+  .choice span small{color:var(--muted);font-size:12.5px}
+
+  /* appliance categories */
+  .acc{border:1.5px solid var(--line);border-radius:16px;margin-bottom:12px;overflow:hidden;background:#fff}
+  .acc-head{display:flex;align-items:center;gap:12px;background:var(--cream);
+    padding:14px 16px;border-bottom:1px solid var(--line)}
+  .acc-head .ic{width:32px;height:32px;flex:0 0 auto;border-radius:10px;background:#fdf3d0;
+    display:grid;place-items:center;font-size:16px}
+  .acc-head .tt{flex:1;min-width:0}
+  .acc-head b{font-size:15px;color:var(--navy);display:block;line-height:1.25}
+  .acc-head .note{font-size:11.5px;color:var(--muted);font-weight:600}
+  .acc-head .cnt{font-size:11.5px;font-weight:800;color:var(--muted);background:#fff;
+    border:1px solid var(--line);border-radius:99px;padding:3px 9px;white-space:nowrap}
+  .acc .body{padding:8px 12px 14px}
+  .ap{display:flex;align-items:center;gap:12px;padding:11px 6px;border-bottom:1px dashed #efece3}
+  .ap:last-child{border-bottom:0}
+  .ap input[type=checkbox]{width:20px;height:20px;accent-color:var(--navy);flex:0 0 auto}
+  .ap .nm{flex:1;font-size:14.5px;color:var(--ink)}
+  .qty{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+  .qty button{width:34px;height:34px;border-radius:10px;border:1.5px solid var(--line);background:#fff;
+    font-size:18px;line-height:1;cursor:pointer;color:var(--navy);font-weight:700}
+  .qty button:active{background:var(--solar);border-color:var(--solar)}
+  .qty input{width:56px;text-align:center;padding:8px 4px;font-size:15px;border-radius:10px}
+  .ap.off .qty{opacity:.55}
+
+  /* upload */
+  .upload{display:flex;align-items:center;gap:12px;border:1.5px dashed #cfc8b8;border-radius:14px;
+    padding:14px;background:#fffdf7;cursor:pointer}
+  .upload .up-ic{width:34px;height:34px;border-radius:10px;background:var(--solar);display:grid;place-items:center;flex:0 0 auto}
+  .upload .up-ic svg{width:17px;height:17px}
+  .upload b{display:block;font-size:14px;color:var(--navy)}
+  .upload small{color:var(--muted);font-size:12px}
+
+  /* estimate */
+  .estimate{margin:22px 0 0;border:1.5px dashed #cfc8b8;border-radius:16px;padding:16px;background:#fffdf7}
+  .estimate h3{margin:0 0 6px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--navy)}
+  .estimate p{margin:0;font-size:14px;color:var(--muted)}
+  .estimate .nums{display:flex;gap:10px;margin-top:14px}
+  .estimate .num{flex:1;background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px;text-align:center}
+  .estimate .num b{display:block;font-size:19px;color:var(--navy);letter-spacing:-.01em}
+  .estimate .num span{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+
+  /* actions */
+  .actions{margin-top:24px}
+  .btn{width:100%;border:0;border-radius:99px;padding:17px 20px;font:inherit;font-size:13px;
+    font-weight:800;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:.15s}
+  .btn-primary{background:var(--navy);color:#fff}
+  .btn-primary:active{background:var(--solar);color:var(--navy)}
+  .btn-wa{margin-top:12px;background:#fff;color:var(--navy);border:1.5px solid var(--line);
+    display:flex;align-items:center;justify-content:center;gap:10px}
+  .btn-wa:active{background:#eaf7f0}
+  .consent{margin:16px 0 0;font-size:12px;color:var(--muted);text-align:center}
+  .skip{background:none;border:0;color:var(--muted);font:inherit;font-size:13px;cursor:pointer;
+    padding:10px 0 0;text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="grid">
+
+    <!-- ============ PITCH ============ -->
+    <div class="pitch">
+      <div class="eyebrow">06 · Free assessment</div>
+      <h1>Request your free solar assessment</h1>
+      <p class="lede">Tell us about your home and your bill. We'll size a system for Palawan conditions,
+        then WhatsApp you a personalised proposal — free, and no obligation.</p>
+      <ul class="perks">
+        <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="#0b1b2b" stroke-width="4"><path d="M5 13l4 4L19 7"/></svg></span><span><b>Sized from your real appliances</b>, not catalogue guesswork</span></li>
+        <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="#0b1b2b" stroke-width="4"><path d="M5 13l4 4L19 7"/></svg></span><span><b>Built for Palawan</b> — salt, heat and brownouts</span></li>
+        <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="#0b1b2b" stroke-width="4"><path d="M5 13l4 4L19 7"/></svg></span><span><b>Free lifetime remote monitoring</b> on Amates installs<sup>*</sup></span></li>
+      </ul>
+      <p class="fine"><sup>*</sup>Requires a working WiFi connection at the site, and no modifications except by
+        Amates Solutions. Subject to the lifespan of the appliances and manufacturer software.</p>
+    </div>
+
+    <!-- ============ FORM ============ -->
+    <form class="card" onsubmit="return false">
+
+      <div class="progress" aria-hidden="true">
+        <span class="dot on" data-d="1"></span><span class="dot" data-d="2"></span>
+        <span class="dot" data-d="3"></span><span class="dot" data-d="4"></span>
+        <span class="lbl">Step <b id="stepN">1</b> of 4</span>
+      </div>
+
+      <!-- 1 · YOU -->
+      <section class="block" data-step="1">
+        <div class="step"><span class="n">1</span><h2>You</h2></div>
+        <p class="hint">So we know who we're talking to.</p>
+
+        <div class="field">
+          <label for="name">Full name <span class="req">*</span></label>
+          <input id="name" type="text" placeholder="Juan Dela Cruz" required>
+        </div>
+
+        <div class="field" style="border:1.5px solid var(--solar);background:#fffdf7;border-radius:16px;padding:14px">
+          <label for="wa">WhatsApp number <span class="req">*</span></label>
+          <input id="wa" type="tel" placeholder="+63 917 000 0000" required>
+          <p style="margin:8px 0 0;font-size:12px;color:var(--muted)">We send your proposal here. This is the fastest way to reach you.</p>
+        </div>
+
+        <div class="two">
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" type="email" placeholder="you@email.com">
+          </div>
+          <div class="field">
+            <label for="ptype">Property type <span class="req">*</span></label>
+            <select id="ptype">
+              <option>Residential home</option><option>Resort / hotel</option>
+              <option>Commercial / office</option><option>Farm / agribusiness</option>
+              <option>Boat / marine</option><option>Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="loc">Location in Palawan <span class="req">*</span></label>
+          <select id="loc">
+            <option>Puerto Princesa</option><option>El Nido</option><option>Taytay</option>
+            <option>Coron</option><option>Roxas</option><option>Narra</option>
+            <option>San Vicente</option><option>Brooke's Point</option><option>Balabac</option>
+            <option>Elsewhere in Palawan</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- 2 · BILL -->
+      <section class="block" data-step="2">
+        <div class="step"><span class="n">2</span><h2>Your electric bill</h2></div>
+        <p class="hint">Roughly how much you pay a month is enough — no need to dig out a bill.</p>
+
+        <div class="field">
+          <label for="bill">Average monthly electric bill <span class="req">*</span></label>
+          <select id="bill">
+            <option value="">Choose a range…</option>
+            <option value="a">Below ₱2,000</option>
+            <option value="b">₱2,000 – ₱5,000</option>
+            <option value="c">₱5,000 – ₱10,000</option>
+            <option value="d">₱10,000 or more</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="legend">Upload your latest bill <span style="text-transform:none;letter-spacing:0;font-weight:600;color:var(--muted)">(optional)</span></label>
+          <label class="upload">
+            <span class="up-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#0b1b2b" stroke-width="2.4"><path d="M12 16V4m0 0l-4 4m4-4l4 4M4 20h16"/></svg></span>
+            <span><b id="upName">Upload your latest bill</b><small>Photo or PDF · helps us be exact · optional</small></span>
+            <input type="file" id="upFile" accept="image/*,.pdf" hidden>
+          </label>
+        </div>
+      </section>
+
+      <!-- 3 · GOALS -->
+      <section class="block" data-step="3">
+        <div class="step"><span class="n">3</span><h2>Your goals &amp; brownouts</h2></div>
+        <p class="hint">Pick everything that applies.</p>
+
+        <div class="field">
+          <span class="legend">What is your main goal for going solar?</span>
+          <div class="choices" id="goals">
+            <label class="choice"><input type="checkbox" value="bill"><span><b>Lower my electric bill</b><small>Cut what I pay each month</small></span></label>
+            <label class="choice"><input type="checkbox" value="backup"><span><b>Backup power during brownouts</b><small>Keep the lights on when power drops</small></span></label>
+            <label class="choice"><input type="checkbox" value="offgrid"><span><b>Completely off-grid</b><small>I have no power connection yet</small></span></label>
+            <label class="choice"><input type="checkbox" value="unsure"><span><b>Not sure yet, please recommend</b><small>We'll suggest what fits</small></span></label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="brown">How often do you experience brownouts?</label>
+          <select id="brown">
+            <option>Rarely</option><option>Weekly</option><option>Daily</option><option>Almost always</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- 4 · APPLIANCES -->
+      <section class="block" data-step="4" id="applianceBlock">
+        <div class="step"><span class="n">4</span><h2>Your appliances &amp; roof</h2></div>
+        <p class="hint">Tick what you have — this is how we size your system correctly.</p>
+
+        <div id="accs"></div>
+
+        <div class="two" style="margin-top:16px">
+          <div class="field">
+            <label for="roof">Where will the panels go?</label>
+            <select id="roof"><option>Concrete roof</option><option>Metal roof</option><option>Ground mount</option><option>Not sure</option></select>
+          </div>
+          <div class="field">
+            <label for="shade">Is the area shaded?</label>
+            <select id="shade"><option>Full sun all day</option><option>Some shade</option><option>Heavy shade</option></select>
+          </div>
+        </div>
+        <button type="button" class="skip" id="skipApps">Skip this section — size me from my bill instead</button>
+      </section>
+
+      <!-- ESTIMATE -->
+      <div class="estimate">
+        <h3>Your instant estimate</h3>
+        <p>As you fill this out, we will estimate how much money you could save on your monthly bill.
+           No technical knowledge required.</p>
+        <div class="nums">
+          <div class="num"><b id="eSize">–</b><span>System size</span></div>
+          <div class="num"><b id="eSave">–</b><span>Saved / month</span></div>
+          <div class="num"><b id="ePay">–</b><span>Payback</span></div>
+        </div>
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="actions">
+        <button type="submit" class="btn btn-primary">Get my free quote</button>
+        <button type="button" class="btn btn-wa" onclick="window.open('https://wa.me/639170000000','_blank')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#0b1b2b"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-1.7-.1-.4-.1-.9-.3-1.6-.6-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 .9-2.2c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.4l.8 2c.1.1.1.3 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.7-.1l.9-1c.2-.3.4-.2.7-.1l2 .9c.3.2.5.2.6.4 0 .1 0 .7-.2 1.5z"/></svg>
+          Don't like filling out forms? Chat with us on WhatsApp
+        </button>
+        <p class="consent">By sending, you agree to be contacted by Amates Solutions about your quote.
+          We don't share your details.</p>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<script>
+/* ---------- appliance data ---------- */
+const CATS = [
+  { id:'cool', icon:'❄', title:'Cooling & Air', note:'Crucial for PH', open:true,
+    items:['Aircon — Window Type','Aircon — Split Type Standard','Aircon — Split Type Inverter','Electric Fans','Ceiling Fans'] },
+  { id:'water', icon:'💧', title:'Water & Heating', note:'Heavy loads',
+    items:['Water Pump / Deep Well Pump','Bathroom Water Heater / Shower','Electric Kettle','Swimming Pool Pump'] },
+  { id:'kitchen', icon:'🍚', title:'Kitchen & Laundry',
+    items:['Refrigerator','Chest Freezer','Rice Cooker','Microwave','Induction Stove','Washing Machine','Clothes Dryer'] },
+  { id:'fun', icon:'📺', title:'Entertainment, Office & Tools',
+    items:['Television','Desktop Computer / Gaming PC','Laptops','Starlink / WiFi Router','Power Tools / Welding Machine'] },
+];
+
+const accs = document.getElementById('accs');
+accs.innerHTML = CATS.map((c,ci)=>`
+  <div class="acc" data-cat="${c.id}">
+    <div class="acc-head">
+      <span class="ic">${c.icon}</span>
+      <span class="tt"><b>${c.title}</b><span class="note">${c.note}</span></span>
+      <span class="cnt" data-cnt>0 selected</span>
+    </div>
+    <div class="body">
+      ${c.items.map(it=>`
+        <div class="ap off">
+          <input type="checkbox" id="a_${ci}_${it}" data-name="${it}">
+          <label class="nm" for="a_${ci}_${it}">${it}</label>
+          <div class="qty">
+            <button type="button" data-d="-1" aria-label="less">−</button>
+            <input type="text" inputmode="numeric" value="1" data-q aria-label="quantity">
+            <button type="button" data-d="1" aria-label="more">+</button>
+          </div>
+        </div>`).join('')}
+      ${c.id==='fun' ? `
+        <div class="ap off">
+          <input type="checkbox" id="a_other" data-name="Other">
+          <label class="nm" for="a_other">Other (please specify)</label>
+          <input type="text" id="a_other_txt" placeholder="e.g. gate motor" style="width:150px;padding:8px 10px;font-size:14px;border:1.5px solid var(--line);border-radius:10px">
+        </div>`:''}
+    </div>
+  </div>`).join('');
+
+/* ---------- selection + quantity ---------- */
+accs.querySelectorAll('.ap').forEach(row=>{
+  const cb = row.querySelector('input[type=checkbox]');
+  const q = row.querySelector('[data-q]');
+  const free = row.querySelector('input[type=text]:not([data-q])');
+
+  const refresh = ()=>{
+    row.classList.toggle('off', !cb.checked);
+    const body = row.closest('.body');
+    const n = body.querySelectorAll('input[type=checkbox]:checked').length;
+    row.closest('.acc').querySelector('[data-cnt]').textContent = n + ' selected';
+  };
+  const check = ()=>{ if(!cb.checked){ cb.checked = true; } refresh(); };
+
+  cb.addEventListener('change', refresh);
+
+  // tapping anywhere on the row toggles it (but not while typing/pressing a control)
+  row.addEventListener('click', (e)=>{
+    if (e.target.closest('input,button,select,textarea,label')) return;
+    cb.checked = !cb.checked;
+    refresh();
+  });
+
+  row.querySelectorAll('.qty button').forEach(b=>b.addEventListener('click',(e)=>{
+    e.stopPropagation();
+    check();
+    q.value = Math.max(1, (parseInt(q.value||'1',10)||1) + parseInt(b.dataset.d,10));
+    refresh();
+  }));
+
+  if (q) q.addEventListener('input', ()=>{ check(); refresh(); });
+  if (free) free.addEventListener('input', check);
+});
+
+/* ---------- file upload label ---------- */
+const upFile = document.getElementById('upFile'), upName = document.getElementById('upName');
+upFile.addEventListener('change', ()=>{ upName.textContent = upFile.files.length ? upFile.files[0].name : 'Upload your latest bill'; });
+
+/* ---------- skip appliances ---------- */
+document.getElementById('skipApps').addEventListener('click', ()=>{
+  document.getElementById('applianceBlock').style.display='none';
+});
+
+/* ---------- instant estimate (demo maths) ---------- */
+const BILL_MID = { a:1500, b:3500, c:7500, d:14000 };
+function recalc(){
+  const bill = BILL_MID[document.getElementById('bill').value] || 0;
+  let units = 0;
+  accs.querySelectorAll('input[type=checkbox]:checked').forEach(cb=>{
+    const row = cb.closest('.ap');
+    const q = parseInt(row.querySelector('[data-q]')?.value||'1',10)||1;
+    units += q * (cb.dataset.name?.includes('Aircon') ? 1.2 : cb.dataset.name?.includes('Pump') ? 1.5 : 0.35);
+  });
+  const size = Math.max(0, Math.round(((bill/6.5) + units*100) / 100) / 10) || 0;
+  const save = bill ? Math.round(bill*0.55) : 0;
+  const pay  = save ? (size*110000/save/12).toFixed(1) : 0;
+  document.getElementById('eSize').textContent = size ? size.toFixed(1)+' kWp' : '–';
+  document.getElementById('eSave').textContent = save ? '₱'+save.toLocaleString('en-PH') : '–';
+  document.getElementById('ePay').textContent  = pay ? pay+' yrs' : '–';
+}
+['bill'].forEach(id=>document.getElementById(id).addEventListener('change', recalc));
+accs.addEventListener('change', recalc);
+
+/* ---------- progress ---------- */
+const blocks = [...document.querySelectorAll('section.block')];
+const dots = [...document.querySelectorAll('.progress .dot')];
+const stepN = document.getElementById('stepN');
+window.addEventListener('scroll', ()=>{
+  let idx = 1;
+  blocks.forEach((b,i)=>{ if (b.getBoundingClientRect().top < innerHeight*0.55) idx = i+1; });
+  dots.forEach((d,i)=>d.classList.toggle('on', i < idx));
+  stepN.textContent = idx;
+}, {passive:true});
+</script>
+</body>
+</html>
